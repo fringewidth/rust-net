@@ -1,7 +1,7 @@
-use crate::{Matrix, MatrixView};
+use crate::MatDisplay;
 
-use super::data::MatrixOwner;
-// use super::data::MatrixView;
+use super::data::{MatrixOwner, MatrixView};
+use super::traits::Matrix;
 
 use std::{
     fmt::Display,
@@ -9,7 +9,7 @@ use std::{
     vec,
 };
 
-impl<T: Display + Copy> Matrix<T> for MatrixOwner<T> {
+impl<T: Copy> Matrix<T> for MatrixOwner<T> {
     fn rows(&self) -> usize {
         self.rows
     }
@@ -21,7 +21,7 @@ impl<T: Display + Copy> Matrix<T> for MatrixOwner<T> {
     }
 }
 
-impl<'a, T: Display + Copy> Matrix<T> for MatrixView<'a, T> {
+impl<'a, T: Copy> Matrix<T> for MatrixView<'a, T> {
     fn rows(&self) -> usize {
         self.rows
     }
@@ -46,38 +46,46 @@ impl<T: Default + Copy> MatrixOwner<T> {
         MatrixView {
             rows: self.cols,
             cols: self.rows,
-            data: &mut self.data,
+            data: &self.data,
+        }
+    }
+
+    pub fn t_mut(&mut self) -> MatrixOwner<T> {
+        MatrixOwner {
+            rows: self.cols,
+            cols: self.rows,
+            data: self.data.clone(),
         }
     }
 }
 
-impl<T> Index<(usize, usize)> for MatrixOwner<T> {
+impl<T: Copy> Index<(usize, usize)> for MatrixOwner<T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.data[row * self.cols + col]
+        &self.at((row, col))
     }
 }
 
-impl<T> IndexMut<(usize, usize)> for MatrixOwner<T> {
+impl<T: Copy> IndexMut<(usize, usize)> for MatrixOwner<T> {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
         &mut self.data[row * self.cols + col]
     }
 }
 
-impl<'a, T> Index<(usize, usize)> for MatrixView<'a, T> {
+impl<'a, T: Copy> Index<(usize, usize)> for MatrixView<'a, T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.data[row * self.cols + col]
+        self.at((row, col))
     }
 }
 
-impl<'a, T> IndexMut<(usize, usize)> for MatrixView<'a, T> {
-    fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
-        &mut self.data[row * self.cols + col]
-    }
-}
+// impl<'a, T: Copy> IndexMut<(usize, usize)> for MatrixView<'a, T> {
+//     fn index_mut(&mut self, (row, col): (usize, usize)) -> &Self::Output {
+//         return &self.data[row * self.cols + col];
+//     }
+// }
 
 impl<'a, T> MatrixView<'a, T> {
     pub fn from_owner(owner: &'a mut MatrixOwner<T>) -> Self {
@@ -88,3 +96,6 @@ impl<'a, T> MatrixView<'a, T> {
         }
     }
 }
+
+impl<T: Copy + Display> MatDisplay<T> for MatrixOwner<T> {}
+impl<'a, T: Copy + Display> MatDisplay<T> for MatrixView<'a, T> {}
