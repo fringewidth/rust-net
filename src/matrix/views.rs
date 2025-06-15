@@ -2,6 +2,7 @@ use crate::MatDisplay;
 
 use super::data::{MatrixOwner, MatrixView};
 use super::traits::Matrix;
+use num_traits::One;
 
 use std::{
     fmt::Display,
@@ -59,11 +60,25 @@ impl<T: Default + Copy> MatrixOwner<T> {
     }
 }
 
+impl<T: Default + Copy + One> MatrixOwner<T> {
+    pub fn eye(dim: usize) -> Self {
+        let mut eye = Self {
+            rows: dim,
+            cols: dim,
+            data: vec![T::default(); dim * dim],
+        };
+        for i in 0..dim {
+            eye[(i, i)] = T::one();
+        }
+        eye
+    }
+}
+
 impl<T: Copy> Index<(usize, usize)> for MatrixOwner<T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.at((row, col))
+        &self.data[row * self.cols + col]
     }
 }
 
@@ -77,7 +92,7 @@ impl<'a, T: Copy> Index<(usize, usize)> for MatrixView<'a, T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        self.at((row, col))
+        &self.data[row * self.cols + col]
     }
 }
 

@@ -4,8 +4,8 @@ pub trait Matrix<T: Copy> {
     fn rows(&self) -> usize;
     fn cols(&self) -> usize;
     fn data(&self) -> &Vec<T>;
-    fn at(&self, index: (usize, usize)) -> &T {
-        &self.data()[index.0 * self.cols() + index.1]
+    fn at(&self, index: (usize, usize)) -> T {
+        self.data()[index.0 * self.cols() + index.1]
     }
 
     fn shape(&self) -> (usize, usize) {
