@@ -50,6 +50,8 @@ where
     A: Matrix<T>,
     B: Matrix<T>,
 {
+    assert_eq!(matA.rows(), matB.rows());
+    assert_eq!(matA.cols(), matB.cols());
     let mut matC: MatrixOwner<T> = MatrixOwner::null(matA.rows(), matA.cols());
     for i in 0..matA.rows() {
         for j in 0..matA.cols() {
@@ -65,6 +67,8 @@ where
     A: Matrix<T>,
     B: Matrix<T>,
 {
+    assert_eq!(matA.rows(), matB.rows());
+    assert_eq!(matA.cols(), matB.cols());
     let subtrahend = scale(matB, -T::one());
     matadd(matA, &subtrahend)
 }
