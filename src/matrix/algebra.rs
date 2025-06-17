@@ -1,6 +1,6 @@
 use super::{Matrix, MatrixOwner};
-use std::ops::{Add, AddAssign, Mul};
 use num_traits::{One, Signed};
+use std::ops::{Add, AddAssign, Mul};
 
 pub fn matmul<T, A, B>(matA: &A, matB: &B) -> MatrixOwner<T>
 where
