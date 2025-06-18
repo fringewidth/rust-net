@@ -10,6 +10,7 @@ impl<T: Default + Clone> MatrixOwner<T> {
             rows,
             cols,
             data: vec![T::default(); rows * cols],
+            transposed: false,
         }
     }
 }
@@ -20,6 +21,7 @@ impl<T: Default + Copy + One> MatrixOwner<T> {
             rows: dim,
             cols: dim,
             data: vec![T::default(); dim * dim],
+            transposed: false,
         };
         for i in 0..dim {
             eye[(i, i)] = T::one();
@@ -35,6 +37,11 @@ impl<T: From<f32> + Clone> MatrixOwner<T> {
         let data = (0..rows * cols)
             .map(|_| T::from(dist.sample(&mut rng)))
             .collect();
-        Self { rows, cols, data }
+        Self {
+            rows,
+            cols,
+            data,
+            transposed: false,
+        }
     }
 }

@@ -4,8 +4,13 @@ pub trait Matrix<T: Copy> {
     fn rows(&self) -> usize;
     fn cols(&self) -> usize;
     fn data(&self) -> &Vec<T>;
+    fn transposed(&self) -> bool;
     fn at(&self, index: (usize, usize)) -> T {
-        self.data()[index.0 * self.cols() + index.1]
+        if !self.transposed() {
+            self.data()[index.0 * self.cols() + index.1]
+        } else {
+            self.data()[index.1 * self.rows() + index.0]
+        }
     }
 
     fn shape(&self) -> (usize, usize) {

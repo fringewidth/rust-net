@@ -1,20 +1,29 @@
 use rust_net::*;
 
 fn main() {
-    let mut mat: MatrixOwner<f32> = MatrixOwner::normal(4, 2, 0., 1.);
-    let mut eye: MatrixOwner<f32> = MatrixOwner::eye(2);
+    let mut a: MatrixOwner<f32> = MatrixOwner::normal(3, 2, 0., 1.);
+    let mut b: MatrixOwner<f32> = MatrixOwner::normal(2, 4, 0., 1.);
 
-    println!("Matrix A: \n{}", MatDisplay::to_string(&mat));
-    
-    println!("Matrix I: \n{}", MatDisplay::to_string(&eye));
+    println!("Matrix A:\n{}", MatDisplay::to_string(&a));
+    println!("Matrix B:\n{}", MatDisplay::to_string(&b));
 
-    println!("AI: \n{}", MatDisplay::to_string(&matmul(&mat, &eye)));
+    // AB
+    let mut ab = matmul(&a, &b);
+    println!("AB:\n{}", MatDisplay::to_string(&ab));
 
-    // println!("A: \n{}", MatDisplay::to_string(&mat));
-    // println!("Aᵀ:\n{}", MatDisplay::to_string(&mat.t()));
-    // let matT = mat.t_mut();
-    // let mut matResult = matmul(&mat, &matT);
-    // matResult = matmul(&matResult, &MatrixOwner::eye(matResult.rows()));
+    // Bᵀ
+    let mut b_t = b.t_mut();
+    println!("Bᵀ:\n{}", MatDisplay::to_string(&b_t));
 
-    // println!("{}", matResult.to_string());
+    // Aᵀ
+    let mut a_t = a.t_mut();
+    println!("Aᵀ:\n{}", MatDisplay::to_string(&a_t));
+
+    // (AB)^T
+    let mut ab_t = ab.t_mut();
+    println!("(AB)^T:\n{}", MatDisplay::to_string(&ab_t));
+
+    // BᵀAᵀ
+    let mut bta_t = matmul(&b_t, &a_t);
+    println!("BᵀAᵀ:\n{}", MatDisplay::to_string(&bta_t));
 }

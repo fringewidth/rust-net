@@ -17,7 +17,10 @@ impl<T: Copy> Matrix<T> for MatrixOwner<T> {
         self.cols
     }
     fn data(&self) -> &Vec<T> {
-        return &self.data;
+        &self.data
+    }
+    fn transposed(&self) -> bool {
+        self.transposed
     }
 }
 
@@ -31,6 +34,9 @@ impl<'a, T: Copy> Matrix<T> for MatrixView<'a, T> {
     fn data(&self) -> &Vec<T> {
         return self.data;
     }
+    fn transposed(&self) -> bool {
+        self.transposed
+    }
 }
 
 impl<T: Copy> MatrixOwner<T> {
@@ -39,6 +45,7 @@ impl<T: Copy> MatrixOwner<T> {
             rows: self.cols,
             cols: self.rows,
             data: &self.data,
+            transposed: true,
         }
     }
 
@@ -47,6 +54,7 @@ impl<T: Copy> MatrixOwner<T> {
             rows: self.cols,
             cols: self.rows,
             data: self.data.clone(),
+            transposed: true,
         }
     }
 }
@@ -55,13 +63,23 @@ impl<T: Copy> Index<(usize, usize)> for MatrixOwner<T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.data[row * self.cols + col]
+        let idx = if self.transposed {
+            col * self.rows + row
+        } else {
+            row * self.cols + col
+        };
+        &self.data[idx]
     }
 }
 
 impl<T: Copy> IndexMut<(usize, usize)> for MatrixOwner<T> {
     fn index_mut(&mut self, (row, col): (usize, usize)) -> &mut Self::Output {
-        &mut self.data[row * self.cols + col]
+        let idx = if self.transposed {
+            col * self.rows + row
+        } else {
+            row * self.cols + col
+        };
+        &mut self.data[idx]
     }
 }
 
@@ -69,7 +87,12 @@ impl<'a, T: Copy> Index<(usize, usize)> for MatrixView<'a, T> {
     type Output = T;
 
     fn index(&self, (row, col): (usize, usize)) -> &Self::Output {
-        &self.data[row * self.cols + col]
+        let idx = if self.transposed {
+            col * self.rows + row
+        } else {
+            row * self.cols + col
+        };
+        &self.data[idx]
     }
 }
 
@@ -85,6 +108,7 @@ impl<'a, T> MatrixView<'a, T> {
             rows: owner.rows,
             cols: owner.cols,
             data: &mut owner.data,
+            transposed: false,
         }
     }
 }
